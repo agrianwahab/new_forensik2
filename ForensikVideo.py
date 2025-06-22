@@ -1692,32 +1692,32 @@ def generate_forensic_conclusions(result: AnalysisResult, ferm: dict) -> dict:
     # Factor 1: Multi-method confirmation
     avg_methods = evidence_strength['multi_method_confirmation']['average_methods_per_anomaly']
     reliability_factors.append({
-        'factor': 'Multi-method confirmation',
-        'assessment': f"Average of {avg_methods:.1f} methods confirm each anomaly",
+        'factor': 'Konfirmasi multi-metode',
+        'assessment': f"Rata-rata {avg_methods:.1f} metode mengonfirmasi tiap anomali",
         'impact': 'Positive' if avg_methods >= 2 else 'Negative'
     })
     
     # Factor 2: False positive risk
     fp_risk = evidence_strength['false_positive_assessment']['weighted_risk']
     reliability_factors.append({
-        'factor': 'False positive risk',
-        'assessment': f"{fp_risk*100:.1f}% estimated risk of false positives",
+        'factor': 'Risiko positif palsu',
+        'assessment': f"Perkiraan risiko positif palsu {fp_risk*100:.1f}%",
         'impact': 'Positive' if fp_risk < 0.2 else 'Neutral' if fp_risk < 0.4 else 'Negative'
     })
     
     # Factor 3: Temporal distribution
     temp_dist = anomaly_char['temporal_distribution']['distribution_pattern']
     reliability_factors.append({
-        'factor': 'Temporal distribution',
-        'assessment': f"Anomalies show {temp_dist} distribution pattern",
+        'factor': 'Distribusi temporal',
+        'assessment': f"Anomali menunjukkan pola distribusi {temp_dist}",
         'impact': 'Positive' if temp_dist == 'clustered' else 'Neutral' if temp_dist == 'systematic' else 'Negative'
     })
     
     # Factor 4: Technical severity
     avg_severity = anomaly_char['technical_severity']['overall_mean_severity']
     reliability_factors.append({
-        'factor': 'Technical severity',
-        'assessment': f"Average anomaly severity: {avg_severity:.2f} (0-1 scale)",
+        'factor': 'Tingkat keparahan teknis',
+        'assessment': f"Rata-rata tingkat keparahan anomali: {avg_severity:.2f} (skala 0-1)",
         'impact': 'Positive' if avg_severity > 0.7 else 'Neutral' if avg_severity > 0.4 else 'Negative'
     })
     
@@ -1726,8 +1726,8 @@ def generate_forensic_conclusions(result: AnalysisResult, ferm: dict) -> dict:
     if most_likely_alt:
         alt_likelihood = causality['alternative_explanations']['all_alternatives'][most_likely_alt]['likelihood']
         reliability_factors.append({
-            'factor': 'Alternative explanations',
-            'assessment': f"{most_likely_alt} is a {alt_likelihood} likelihood alternative",
+            'factor': 'Penjelasan alternatif',
+            'assessment': f"{most_likely_alt} merupakan alternatif dengan peluang {alt_likelihood}",
             'impact': 'Negative' if alt_likelihood == 'High' else 'Neutral' if alt_likelihood == 'Medium-High' else 'Positive'
         })
     
@@ -1737,36 +1737,36 @@ def generate_forensic_conclusions(result: AnalysisResult, ferm: dict) -> dict:
     
     # Generate overall reliability statement
     if positive_count >= 3 and negative_count <= 1:
-        reliability = "High reliability: Evidence strongly supports the presence of video manipulation"
+        reliability = "Keandalan Tinggi: Bukti sangat mendukung adanya manipulasi video"
     elif positive_count >= 2 and negative_count <= 2:
-        reliability = "Moderate reliability: Evidence suggests probable video manipulation"
+        reliability = "Keandalan Menengah: Bukti mengindikasikan kemungkinan besar adanya manipulasi video"
     elif positive_count >= negative_count:
-        reliability = "Limited reliability: Evidence indicates possible video manipulation"
+        reliability = "Keandalan Terbatas: Bukti menunjukkan kemungkinan adanya manipulasi video"
     else:
-        reliability = "Low reliability: Evidence is inconclusive or susceptible to alternative explanations"
+        reliability = "Keandalan Rendah: Bukti tidak meyakinkan atau dapat dijelaskan oleh faktor lain"
     
     # Generate recommended actions
     recommended_actions = []
     
     # Action 1: Always recommend based on specific findings
     if primary_findings:
-        recommended_actions.append("Further investigation of specific anomalous segments identified in this analysis")
+        recommended_actions.append("Lakukan investigasi lanjutan pada segmen anomali spesifik yang teridentifikasi pada analisis ini")
     
     # Action 2: Based on false positive risk
     if fp_risk > 0.3:
-        recommended_actions.append("Obtain higher quality source material if possible to reduce compression artifacts")
+        recommended_actions.append("Peroleh materi sumber berkualitas lebih tinggi bila memungkinkan untuk mengurangi artefak kompresi")
     
     # Action 3: Based on reliability assessment
-    if 'Low reliability' in reliability or 'Limited reliability' in reliability:
-        recommended_actions.append("Apply additional forensic methods beyond those used in this analysis")
+    if 'Keandalan Rendah' in reliability or 'Keandalan Terbatas' in reliability:
+        recommended_actions.append("Terapkan metode forensik tambahan di luar yang digunakan pada analisis ini")
     
     # Action 4: When alternative explanations are strong
     if most_likely_alt and alt_likelihood in ['High', 'Medium-High']:
-        recommended_actions.append(f"Examine original recording conditions to rule out {most_likely_alt} as explanation")
+        recommended_actions.append(f"Periksa kondisi perekaman asli untuk menyingkirkan kemungkinan {most_likely_alt} sebagai penjelasan")
     
     # Action 5: When dealing with duplications
     if duplication_count > 0:
-        recommended_actions.append("Compare duplicated segments with surrounding context to determine manipulation purpose")
+        recommended_actions.append("Bandingkan segmen terduplikasi dengan konteks sekitarnya untuk menentukan tujuan manipulasi")
     
     return {
         'primary_findings': primary_findings,
@@ -1872,10 +1872,10 @@ def create_evidence_strength_heatmap(result: AnalysisResult, ferm: dict, out_dir
     
     # Add colorbar
     cbar = ax.figure.colorbar(im, ax=ax)
-    cbar.ax.set_ylabel("Normalized Detection Strength", rotation=-90, va="bottom")
+    cbar.ax.set_ylabel("Tingkat Deteksi Ternormalisasi", rotation=-90, va="bottom")
     
     # Add title and labels
-    ax.set_title("Evidence Strength by Anomaly Type and Detection Method")
+    ax.set_title("Kekuatan Bukti berdasarkan Jenis Anomali dan Metode Deteksi")
     
     # Add text annotations
     for i in range(len(anomaly_types)):
@@ -1970,7 +1970,7 @@ def create_method_correlation_network(result: AnalysisResult, ferm: dict, out_di
         nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
         
         # Add title
-        plt.title("Method Correlation Network: How Often Detection Methods Agree")
+        plt.title("Jaringan Korelasi Metode: Frekuensi Kesepakatan Metode Deteksi")
         ax.axis('off')
         
         # Save the visualization
@@ -1982,7 +1982,7 @@ def create_method_correlation_network(result: AnalysisResult, ferm: dict, out_di
     except ImportError:
         # Fallback if networkx is not available
         fig, ax = plt.subplots(figsize=(10, 8))
-        ax.text(0.5, 0.5, "Method Correlation Network\n(requires networkx library)", 
+        ax.text(0.5, 0.5, "Jaringan Korelasi Metode\n(membutuhkan pustaka networkx)",
                 ha='center', va='center', fontsize=14)
         ax.axis('off')
         
@@ -2002,7 +2002,7 @@ def create_reliability_assessment(result: AnalysisResult, ferm: dict, out_dir: P
     if not reliability_factors:
         # Create empty placeholder
         fig, ax = plt.subplots(figsize=(10, 6))
-        ax.text(0.5, 0.5, "No reliability factors available", ha='center', va='center', fontsize=14)
+        ax.text(0.5, 0.5, "Faktor reliabilitas tidak tersedia", ha='center', va='center', fontsize=14)
         ax.axis('off')
         
         out_path = out_dir / f"ferm_reliability_{Path(result.video_path).stem}.png"
@@ -2045,12 +2045,12 @@ def create_reliability_assessment(result: AnalysisResult, ferm: dict, out_dir: P
     # Add labels and title
     ax.set_xlim(-1.5, 1.5)
     ax.set_xticks([-1, 0, 1])
-    ax.set_xticklabels(['Negative Impact', 'Neutral', 'Positive Impact'])
+    ax.set_xticklabels(['Dampak Negatif', 'Netral', 'Dampak Positif'])
     ax.axvline(x=0, color='black', linestyle='-', alpha=0.3)
     
     # Add reliability assessment as title
-    reliability = ferm['conclusion'].get('reliability_assessment', 'Reliability assessment not available')
-    plt.title(f"Evidence Reliability Assessment\n{reliability}", fontsize=14)
+    reliability = ferm['conclusion'].get('reliability_assessment', 'Penilaian reliabilitas tidak tersedia')
+    plt.title(f"Penilaian Reliabilitas Bukti\n{reliability}", fontsize=14)
     
     # Add grid
     ax.grid(True, axis='x', alpha=0.3)
@@ -2073,7 +2073,7 @@ def create_findings_summary(result: AnalysisResult, ferm: dict, out_dir: Path) -
     n_findings = len(findings)
     if n_findings == 0:
         fig, ax = plt.subplots(figsize=(10, 6))
-        ax.text(0.5, 0.5, "No significant findings detected", ha='center', va='center', fontsize=14)
+        ax.text(0.5, 0.5, "Tidak ada temuan signifikan", ha='center', va='center', fontsize=14)
         ax.axis('off')
     elif n_findings == 1:
         fig, axs = plt.subplots(1, 1, figsize=(12, 6))
@@ -2086,17 +2086,17 @@ def create_findings_summary(result: AnalysisResult, ferm: dict, out_dir: Path) -
     
     # Add title to figure
     if n_findings > 0:
-        fig.suptitle("Key Forensic Findings", fontsize=16, fontweight='bold')
+        fig.suptitle("Temuan Forensik Utama", fontsize=16, fontweight='bold')
         
         # Add findings to subplots
         for i, finding in enumerate(findings[:min(n_findings, 4)]):  # Limit to 4 findings
             ax = axs[i]
             
             # Extract finding details
-            title = finding.get('finding', 'Finding not specified')
-            confidence = finding.get('confidence', 'Unknown')
-            evidence = finding.get('evidence', 'Not specified')
-            interpretation = finding.get('interpretation', 'No interpretation available')
+            title = finding.get('finding', 'Temuan tidak ditentukan')
+            confidence = finding.get('confidence', 'Tidak diketahui')
+            evidence = finding.get('evidence', 'Tidak ada keterangan')
+            interpretation = finding.get('interpretation', 'Tidak ada interpretasi')
             
             # Create colored box based on confidence
             if confidence == 'High':
@@ -2113,12 +2113,12 @@ def create_findings_summary(result: AnalysisResult, ferm: dict, out_dir: Path) -
             ax.text(0.5, 0.85, title, ha='center', va='center', fontsize=12, fontweight='bold',
                    wrap=True, bbox=dict(facecolor='white', alpha=0.7))
             
-            ax.text(0.5, 0.7, f"Confidence: {confidence}", ha='center', va='center', fontsize=11)
-            
-            ax.text(0.5, 0.5, f"Evidence:\n{evidence}", ha='center', va='center', fontsize=10,
+            ax.text(0.5, 0.7, f"Kepercayaan: {confidence}", ha='center', va='center', fontsize=11)
+
+            ax.text(0.5, 0.5, f"Bukti:\n{evidence}", ha='center', va='center', fontsize=10,
                    wrap=True, bbox=dict(facecolor='white', alpha=0.4))
-            
-            ax.text(0.5, 0.2, f"Interpretation:\n{interpretation}", ha='center', va='center', 
+
+            ax.text(0.5, 0.2, f"Interpretasi:\n{interpretation}", ha='center', va='center',
                    fontsize=10, fontstyle='italic', wrap=True)
             
             # Remove axes
@@ -2135,7 +2135,7 @@ def create_findings_summary(result: AnalysisResult, ferm: dict, out_dir: Path) -
     if n_findings > 0:
         recommended_actions = ferm['conclusion'].get('recommended_actions', [])
         if recommended_actions:
-            actions_text = "Recommended Actions:\n" + "\n".join([f"• {action}" for action in recommended_actions])
+            actions_text = "Tindakan yang Disarankan:\n" + "\n".join([f"• {action}" for action in recommended_actions])
             fig.text(0.5, 0.02, actions_text, ha='center', va='bottom', fontsize=10, 
                     bbox=dict(facecolor='lightyellow', alpha=0.5))
     
@@ -3306,13 +3306,13 @@ def run_tahap_5_pelaporan_dan_validasi(result: AnalysisResult, out_dir: Path, ba
     story.append(Spacer(1, 24))
     story.append(Paragraph("Ringkasan Eksekutif", styles['h2']))
 
-    # Use enhanced integrity score
     integrity_score = result.integrity_analysis['score']
     integrity_desc = result.integrity_analysis['description']
+    reliability_overall = result.forensic_evidence_matrix['conclusion']['reliability_assessment']
 
     summary_text = (f"Analisis komprehensif terhadap file <b>{Path(result.video_path).name}</b> telah selesai. "
-                    f"Berdasarkan <b>{len(result.localizations)} peristiwa anomali</b> yang terdeteksi, video ini diberikan "
-                    f"<b>Skor Integritas: {integrity_score}/100 ({integrity_desc})</b>. Metode utama yang digunakan adalah "
+                    f"Berdasarkan <b>{len(result.localizations)} peristiwa anomali</b> yang terdeteksi, video ini memiliki "
+                    f"penilaian reliabilitas <b>{reliability_overall}</b>. Metode utama yang digunakan adalah "
                     f"<b>Klasterisasi K-Means</b> dan <b>Localization Tampering</b> dengan dukungan metode pendukung "
                     f"<b>Error Level Analysis (ELA)</b> dan <b>Scale-Invariant Feature Transform (SIFT)</b>.")
     story.append(Paragraph(summary_text, styles['Justify']))
